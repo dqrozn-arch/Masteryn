@@ -32,8 +32,8 @@ export default async function BarberDashboard() {
 
   // Haftalık trend
   const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-  const recentReviews = profile.receivedReviews.filter((r) => new Date(r.createdAt) >= oneWeekAgo);
-  const olderReviews  = profile.receivedReviews.filter((r) => new Date(r.createdAt) < oneWeekAgo);
+  const recentReviews = profile.receivedReviews.filter((r: typeof profile.receivedReviews[number]) => new Date(r.createdAt) >= oneWeekAgo);
+  const olderReviews  = profile.receivedReviews.filter((r: typeof profile.receivedReviews[number]) => new Date(r.createdAt) < oneWeekAgo);
 
   const calcAvg = (reviews: typeof profile.receivedReviews) =>
     reviews.length === 0 ? null
