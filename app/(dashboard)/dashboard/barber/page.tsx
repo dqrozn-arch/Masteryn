@@ -37,7 +37,7 @@ export default async function BarberDashboard() {
 
   const calcAvg = (reviews: typeof profile.receivedReviews) =>
     reviews.length === 0 ? null
-    : ((reviews.reduce((s: number, r) =>
+    : ((reviews.reduce((s: number, r: typeof profile.receivedReviews[number]) =>
         s + (r.visualFidelity + r.technicalSkill + r.processTransparency + r.expectationMgmt + r.compensationScore) / 5
       , 0) / reviews.length) * 2);
 

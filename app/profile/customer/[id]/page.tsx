@@ -45,7 +45,7 @@ export default async function CustomerProfilePage({ params }: { params: Promise<
                   { label: "Nezaket", vals: reviews.map(r => r.communicationRespect) },
                   { label: "Dürüstlük", vals: reviews.map(r => r.feedbackHonesty) },
                 ].map((item) => {
-                  const avg = item.vals.reduce((s,v)=>s+v,0)/item.vals.length;
+                  const avg = item.vals.reduce((s: number, v: number)=>s+v,0)/item.vals.length;
                   return (
                     <div key={item.label}>
                       <div className={`text-lg font-bold ${avg >= 4 ? "text-green-400" : avg >= 3 ? "text-amber-400" : "text-red-400"}`}>

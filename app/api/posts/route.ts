@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
 
         const allReviews = await tx.customerToBarberReview.findMany({ where: { barberId } });
         const count = allReviews.length;
-        const avgF = (f: keyof typeof scores) => allReviews.reduce((s, r) => s + r[f], 0) / count;
+        const avgF = (f: keyof typeof scores) => allReviews.reduce((s: number, r) => s + (r[f] as number), 0) / count;
         const avgs = {
           avgVisualFidelity: avgF("visualFidelity"), avgTechnical: avgF("technicalSkill"),
           avgTransparency: avgF("processTransparency"), avgExpectation: avgF("expectationMgmt"),
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
         };
         await tx.barberProfile.update({
           where: { id: barberId },
-          data: { ...avgs, overallScore: (Object.values(avgs).reduce((s,v)=>s+v,0)/5)*2, reviewCount: count },
+          data: { ...avgs, overallScore: (Object.values(avgs).reduce((s: number, v: number)=>s+v,0)/5)*2, reviewCount: count },
         });
       }
     }
