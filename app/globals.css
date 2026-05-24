@@ -1,8 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #080808;
+  --foreground: #f4f4f5;
+
+  /* Altın renk paleti */
+  --gold:           #C9A96E;
+  --gold-light:     #DFC28A;
+  --gold-dark:      #A8894E;
+  --gold-glow:      rgba(201, 169, 110, 0.25);
+  --gold-border:    rgba(201, 169, 110, 0.22);
+  --gold-subtle:    rgba(201, 169, 110, 0.07);
+
+  /* Mat bakır */
+  --copper:         #B87333;
+  --copper-glow:    rgba(184, 115, 51, 0.2);
 }
 
 @theme inline {
@@ -12,15 +24,94 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+html { scroll-behavior: smooth; }
+
+/* Selection */
+::selection { background: var(--gold-glow); color: var(--gold); }
+
+/* Premium input focus */
+.input-premium:focus {
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.04);
+}
+
+/* Glass card */
+.glass {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Altın cam */
+.glass-gold {
+  background: var(--gold-subtle);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--gold-border);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #ffffff 0%, #71717a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Altın gradient text */
+.gold-text {
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Yıldız parıltı */
+.star-glow { filter: drop-shadow(0 0 5px var(--gold-glow)); }
+
+/* Altın gölge */
+.gold-shadow { box-shadow: 0 0 24px var(--gold-glow), 0 0 1px var(--gold-border); }
+
+/* Kart premium */
+.card-premium {
+  background: #141414;
+  border: 1px solid #252525;
+  border-radius: 20px;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.card-premium:hover {
+  border-color: var(--gold-border);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5), 0 0 1px var(--gold-border);
+  transform: translateY(-2px);
+}
+
+/* Animasyonlar */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.4s ease forwards; }
+
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+
+/* Scrollbar gizle (yatay kaydırma için) */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar { display: none; }

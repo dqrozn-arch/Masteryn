@@ -1,0 +1,325 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  password        String
+  userType        UserType
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  barberProfile   BarberProfile?
+  customerProfile CustomerProfile?
+  postLikes       PostLike[]
+  sessions        Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CustomerProfile {
+  id              String                   @id @default(cuid())
+  userId          String                   @unique
+  name            String
+  surname         String
+  phone           String?
+  avatar          String?
+  bio             String?
+  city            String?
+  appointments    Appointment[]
+  receivedReviews BarberToCustomerReview[]
+  conversations   Conversation[]
+  favorites       CustomerFavorite[]
+  user            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  givenReviews    CustomerToBarberReview[]
+  posts           Post[]
+}
+
+model BarberProfile {
+  id                String                   @id @default(cuid())
+  userId            String                   @unique
+  name              String
+  surname           String
+  phone             String?
+  avatar            String?
+  bio               String?
+  city              String
+  district          String?
+  address           String?
+  salonName         String?
+  reviewCount       Int                      @default(0)
+  specialties       String[]                 @default([])
+  approvedAt        DateTime?
+  status            BarberStatus             @default(PENDING)
+  username          String?                  @unique
+  avgCompensation   Float                    @default(0)
+  avgExpectation    Float                    @default(0)
+  avgTechnical      Float                    @default(0)
+  avgTransparency   Float                    @default(0)
+  avgVisualFidelity Float                    @default(0)
+  overallScore      Float                    @default(0)
+  appointments      Appointment[]
+  availability      BarberAvailability[]
+  campaigns         BarberCampaign[]
+  certificates      BarberCertificate[]
+  user              User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  givenReviews      BarberToCustomerReview[]
+  workplaces        BarberWorkplace[]
+  conversations     Conversation[]
+  favoritedBy       CustomerFavorite[]
+  receivedReviews   CustomerToBarberReview[]
+  posts             Post[]
+}
+
+model Conversation {
+  id         String          @id @default(cuid())
+  customerId String
+  barberId   String
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  barber     BarberProfile   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  customer   CustomerProfile @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  messages   Message[]
+
+  @@unique([customerId, barberId])
+}
+
+model Message {
+  id                String            @id @default(cuid())
+  conversationId    String
+  senderType        MessageSenderType
+  text              String?
+  imageUrl          String?
+  type              MessageType       @default(TEXT)
+  createdAt         DateTime          @default(now())
+  agreementService  String?
+  agreementPrice    Int?
+  agreementDuration Int?
+  agreementStatus   AgreementStatus   @default(PENDING)
+  conversation      Conversation      @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+}
+
+model CustomerFavorite {
+  id         String          @id @default(cuid())
+  customerId String
+  barberId   String
+  createdAt  DateTime        @default(now())
+  barber     BarberProfile   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  customer   CustomerProfile @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, barberId])
+}
+
+model Post {
+  id         String          @id @default(cuid())
+  createdAt  DateTime        @default(now())
+  caption    String?
+  customerId String
+  barberId   String
+  barber     BarberProfile   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  customer   CustomerProfile @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  images     PostImage[]
+  likes      PostLike[]
+}
+
+model PostImage {
+  id     String @id @default(cuid())
+  postId String
+  url    String
+  order  Int    @default(0)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model PostLike {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model CustomerToBarberReview {
+  id                  String          @id @default(cuid())
+  createdAt           DateTime        @default(now())
+  customerId          String
+  barberId            String
+  comment             String?
+  compensationScore   Int
+  expectationMgmt     Int
+  processTransparency Int
+  technicalSkill      Int
+  visualFidelity      Int
+  barber              BarberProfile   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  customer            CustomerProfile @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  images              ReviewImage[]
+
+  @@unique([customerId, barberId])
+}
+
+model ReviewImage {
+  id       String                 @id @default(cuid())
+  reviewId String
+  url      String
+  order    Int                    @default(0)
+  review   CustomerToBarberReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+}
+
+model BarberWorkplace {
+  id                String        @id @default(cuid())
+  barberId          String
+  salonName         String
+  city              String?
+  role              String?
+  startYear         Int
+  endYear           Int?
+  isCurrent         Boolean       @default(false)
+  order             Int           @default(0)
+  employerEmail     String?
+  employerName      String?
+  isVerified        Boolean       @default(false)
+  verificationToken String?       @unique
+  verifiedAt        DateTime?
+  verifierName      String?
+  barber            BarberProfile @relation(fields: [barberId], references: [id], onDelete: Cascade)
+}
+
+model BarberCertificate {
+  id          String        @id @default(cuid())
+  barberId    String
+  name        String
+  issuer      String?
+  year        Int?
+  description String?
+  createdAt   DateTime      @default(now())
+  barber      BarberProfile @relation(fields: [barberId], references: [id], onDelete: Cascade)
+}
+
+model Admin {
+  id        String         @id @default(cuid())
+  username  String         @unique
+  password  String
+  name      String
+  createdAt DateTime       @default(now())
+  sessions  AdminSession[]
+}
+
+model AdminSession {
+  id        String   @id @default(cuid())
+  adminId   String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+}
+
+model BarberToCustomerReview {
+  id                   String          @id @default(cuid())
+  createdAt            DateTime        @default(now())
+  barberId             String
+  customerId           String
+  comment              String?
+  appointmentLoyalty   Int
+  communicationRespect Int
+  feedbackHonesty      Int
+  processCooperation   Int
+  barber               BarberProfile   @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  customer             CustomerProfile @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([barberId, customerId])
+}
+
+model BarberAvailability {
+  id        String        @id @default(cuid())
+  barberId  String
+  dayOfWeek Int
+  startTime String
+  endTime   String
+  isActive  Boolean       @default(true)
+  barber    BarberProfile @relation(fields: [barberId], references: [id], onDelete: Cascade)
+
+  @@unique([barberId, dayOfWeek])
+}
+
+model Appointment {
+  id         String            @id @default(cuid())
+  barberId   String
+  customerId String
+  service    String
+  date       DateTime
+  duration   Int               @default(60)
+  price      Int?
+  note       String?
+  status     AppointmentStatus @default(PENDING)
+  cancelNote String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  barber     BarberProfile     @relation(fields: [barberId], references: [id], onDelete: Cascade)
+  customer   CustomerProfile   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+}
+
+model BarberCampaign {
+  id         String        @id @default(cuid())
+  barberId   String
+  title      String
+  body       String?
+  service    String?
+  discount   Int?
+  imageUrl   String?
+  validUntil DateTime?
+  isActive   Boolean       @default(true)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  barber     BarberProfile @relation(fields: [barberId], references: [id], onDelete: Cascade)
+}
+
+enum UserType {
+  CUSTOMER
+  BARBER
+}
+
+enum MessageSenderType {
+  CUSTOMER
+  BARBER
+  SYSTEM
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  AGREEMENT
+  SYSTEM
+}
+
+enum AgreementStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BarberStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
