@@ -46,7 +46,7 @@ export default async function BarberMessagesPage() {
         </div>
       ) : (
         <div className="space-y-2">
-          {convs.map((c) => {
+          {convs.map((c: typeof convs[number]) => {
             const lastMsg = c.messages[0];
             const preview = lastMsg?.type === "AGREEMENT" ? "🛡 Resmi Teklif"
               : lastMsg?.type === "SYSTEM" ? "🔔 Sistem bildirimi"
