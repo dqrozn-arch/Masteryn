@@ -14,7 +14,7 @@ interface Certificate {
 }
 interface Post {
   id: string; caption?: string | null; createdAt: string;
-  images: { url: string }[];
+  images: { url: string; order: number }[];
   customer: { name: string; surname: string };
 }
 interface Profile {
