@@ -73,7 +73,7 @@ export default async function BarberDashboard() {
         specialties:        profile.specialties,
         postCount:          profile._count.posts,
         favCount:           profile._count.favoritedBy,
-        hasVerifiedWork:    profile.workplaces.some((w) => w.isVerified),
+        hasVerifiedWork:    profile.workplaces.some((w: { isVerified: boolean }) => w.isVerified),
         memberYears,
       }}
       reviews={profile.receivedReviews as never}
