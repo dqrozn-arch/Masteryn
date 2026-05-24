@@ -47,7 +47,7 @@ export default async function BarberDashboard() {
   })();
 
   const telafi = profile.receivedReviews.filter(
-    (r) => Math.min(r.visualFidelity, r.technicalSkill, r.processTransparency, r.expectationMgmt, r.compensationScore) < 3
+    (r: typeof profile.receivedReviews[number]) => Math.min(r.visualFidelity, r.technicalSkill, r.processTransparency, r.expectationMgmt, r.compensationScore) < 3
   );
 
   // Platform üyelik süresi (yıl)
